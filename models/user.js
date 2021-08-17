@@ -3,6 +3,7 @@ module.exports = function (sequelize, dataTypes) {
     name: {
       type: dataTypes.STRING(20),
       allowNull: false,
+      unique: true,
     },
     nickname: {
       type: dataTypes.STRING(20),
