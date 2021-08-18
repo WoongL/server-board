@@ -13,6 +13,10 @@ module.exports = function (sequelize, dataTypes) {
       type: dataTypes.STRING(20),
       allowNull: false,
     },
+    authtoken: {
+      type: dataTypes.STRING(15),
+      allowNull: true,
+    },
   });
 
   return user;
