@@ -11,13 +11,13 @@ app.use(express.json());
 app.use(cors());
 
 // sign up
-
-app.post("/signup", (req, res) => {
+app.post("/singup", (req, res) => {
   const body = req.body;
   const { name, nickname, pw } = body;
 
   if (!name || !nickname || !pw) {
-    res.status(400).send("회원가입 정보를 모두 입력해주세요");
+    res.send("회원가입 정보를 모두 입력해주세요");
+    return;
   }
   models.user
     .create({
@@ -30,7 +30,17 @@ app.post("/signup", (req, res) => {
     })
     .catch((error) => {
       if (error.name == "SequelizeUniqueConstraintError") {
-        res.status(400).send("중복된 이름이 있습니다");
+        switch (error.fields[0]) {
+          case "name":
+            res.send("아이디 중복");
+            break;
+          case "nickname":
+            res.send("닉네임 중복");
+            break;
+          default:
+            res.send("중복");
+            break;
+        }
       } else res.status(400).send("실패");
     });
 });
@@ -38,6 +48,11 @@ app.post("/signup", (req, res) => {
 app.post("/login", (req, res) => {
   const body = req.body;
   const { name, pw } = body;
+
+  if (!name || !pw) {
+    res.send("로그인에 필요한 정보가 부족합니다");
+    return;
+  }
 
   models.user
     .findOne({
@@ -47,6 +62,7 @@ app.post("/login", (req, res) => {
       },
     })
     .then((result) => {
+      if (result == null) res.send("아이디가 존재하지 않습니다");
       if (result.pw != pw) res.send("비밀번호가 틀렸습니다");
 
       const authtoken = Math.random().toString(36).substr(2, 11);
@@ -72,7 +88,7 @@ app.post("/login", (req, res) => {
         .catch((error) => {});
     })
     .catch((error) => {
-      res.status(400).send("로그인 실패.");
+      console.log(error);
     });
 });
 
