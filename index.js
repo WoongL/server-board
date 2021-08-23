@@ -45,6 +45,7 @@ app.post("/singup", (req, res) => {
     });
 });
 
+//login
 app.post("/login", (req, res) => {
   const body = req.body;
   const { name, pw } = body;
@@ -123,6 +124,41 @@ function authentication({ id, authtoken }, res, resultCallback) {
       res.status(400).send("인증 실패.");
     });
 }
+
+//-------------------------board-------------------------
+
+app.post("/board", (req, res) => {
+  const body = req.body;
+  const { name } = body;
+
+  if (!name) {
+    res.send("게시판명을 입력해주세요");
+    return;
+  }
+  models.board
+    .create({ name })
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send("게시판 생성실패");
+    });
+});
+
+app.get("/board", (rea, res) => {
+  models.board
+    .findAll({ attributes: ["id", "name"] })
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send("게시판 조회실패");
+    });
+});
+
+//-------------------------issue-----------------------------
+
+//-------------------------comment---------------------
 
 app.listen(port, () => {
   console.log("서버 정상동작중");
