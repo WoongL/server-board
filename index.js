@@ -3,7 +3,6 @@ const cors = require("cors");
 const app = express();
 const models = require("./models");
 const sequelize = require("sequelize");
-const op = sequelize.Op;
 
 const port = process.env.PORT || 8080;
 
@@ -145,9 +144,9 @@ app.post("/board", (req, res) => {
     });
 });
 
-app.get("/board", (rea, res) => {
+app.get("/board", (req, res) => {
   models.board
-    .findAll({ attributes: ["id", "name"] })
+    .findAll({ attributes: ["id", "name"], order: [["id", "ASC"]] })
     .then((result) => {
       res.send(result);
     })
@@ -158,7 +157,77 @@ app.get("/board", (rea, res) => {
 
 //-------------------------issue-----------------------------
 
+app.get("/issue/:boardid", (req, res) => {
+  const params = req.params;
+  const { boardid } = params;
+
+  models.issue
+    .findAll({
+      order: [["id", "ASC"]],
+      attributes: ["id", "title", "content", "writer", "createdAt"],
+      where: {
+        boardid,
+      },
+    })
+    .then((r) => {
+      res.send(r);
+    })
+    .catch((e) => {
+      res.send(e);
+    });
+});
+
+app.post("/issue", (req, res) => {
+  const body = req.body;
+  const { boardid, title, content, writer } = body;
+
+  models.issue
+    .create({ boardid, title, content, writer })
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send("화제거리 생성실패");
+    });
+});
+
 //-------------------------comment---------------------
+
+app.get("/comment/:issueid", (req, res) => {
+  const params = req.params;
+  const { issueid } = params;
+
+  models.comment
+    .findAll({
+      order: [["id", "ASC"]],
+      attributes: ["id", "content", "writer", "createdAt"],
+      where: {
+        issueid,
+      },
+    })
+    .then((r) => {
+      res.send(r);
+    })
+    .catch((e) => {
+      res.send(e);
+    });
+});
+
+app.post("/comment", (req, res) => {
+  const body = req.body;
+  const { issueid, content, writer } = body;
+
+  models.comment
+    .create({ issueid, content, writer })
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send("댓글 생성실패");
+    });
+});
+
+//
 
 app.listen(port, () => {
   console.log("서버 정상동작중");

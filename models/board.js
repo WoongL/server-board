@@ -8,7 +8,7 @@ module.exports = function (sequelize, dataTypes) {
   });
 
   board.associate = function (models) {
-    board.hasMany(models.issue, { foreignKey: "issueid", sourceKey: "id" });
+    board.hasMany(models.issue, { foreignKey: "boardid", sourceKey: "id" });
   };
 
   return board;

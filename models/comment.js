@@ -8,8 +8,8 @@ module.exports = function (sequelize, dataTypes) {
       type: dataTypes.STRING(500),
       allowNull: false,
     },
-    userid: {
-      type: dataTypes.INTEGER,
+    writer: {
+      type: dataTypes.STRING(20),
       allowNull: false,
     },
   });
@@ -17,6 +17,5 @@ module.exports = function (sequelize, dataTypes) {
   comment.associate = function (models) {
     comment.belongsTo(models.issue, { foreignKey: "issueid", sourceKey: "id" });
   };
-
   return comment;
 };
