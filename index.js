@@ -177,6 +177,27 @@ app.get("/issue/:boardid", (req, res) => {
     });
 });
 
+app.get("/issue/:boardid/:id", (req, res) => {
+  const params = req.params;
+  const { boardid, id } = params;
+
+  models.issue
+    .findOne({
+      order: [["id", "ASC"]],
+      attributes: ["id", "title", "content", "writer", "createdAt"],
+      where: {
+        boardid,
+        id,
+      },
+    })
+    .then((r) => {
+      res.send(r);
+    })
+    .catch((e) => {
+      res.send(e);
+    });
+});
+
 app.post("/issue", (req, res) => {
   const body = req.body;
   const { boardid, title, content, writer } = body;
@@ -188,6 +209,23 @@ app.post("/issue", (req, res) => {
     })
     .catch((error) => {
       res.send("화제거리 생성실패");
+    });
+});
+
+app.delete("/issue/:id", (req, res) => {
+  const params = req.params;
+  const { id } = params;
+
+  models.issue
+    .destroy({
+      where: { id },
+    })
+    .then((result) => {
+      res.send({ result });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.send({ error });
     });
 });
 
@@ -227,7 +265,23 @@ app.post("/comment", (req, res) => {
     });
 });
 
-//
+app.delete("/comment/:id", (req, res) => {
+  const params = req.params;
+  const { id } = params;
+
+  models.comment
+    .destroy({
+      where: { id },
+    })
+    .then((result) => {
+      res.send({ result });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+});
+
+//------------------------------------------
 
 app.listen(port, () => {
   console.log("서버 정상동작중");

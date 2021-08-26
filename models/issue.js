@@ -19,11 +19,13 @@ module.exports = function (sequelize, dataTypes) {
   });
 
   issue.associate = function (models) {
-    issue.belongsTo(models.board, { foreignKey: "boardid", sourceKey: "id" });
-  };
-
-  issue.associate = function (models) {
+    issue.belongsTo(models.board, {
+      foreignKey: "boardid",
+      sourceKey: "id",
+      onDelete: "CASCADE",
+    });
     issue.hasMany(models.comment, { foreignKey: "issueid", sourceKey: "id" });
   };
+
   return issue;
 };

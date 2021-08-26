@@ -15,7 +15,11 @@ module.exports = function (sequelize, dataTypes) {
   });
 
   comment.associate = function (models) {
-    comment.belongsTo(models.issue, { foreignKey: "issueid", sourceKey: "id" });
+    comment.belongsTo(models.issue, {
+      foreignKey: "issueid",
+      sourceKey: "id",
+      onDelete: "CASCADE",
+    });
   };
   return comment;
 };
