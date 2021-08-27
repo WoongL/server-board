@@ -183,7 +183,6 @@ app.get("/issue/:boardid/:id", (req, res) => {
 
   models.issue
     .findOne({
-      order: [["id", "ASC"]],
       attributes: ["id", "title", "content", "writer", "createdAt"],
       where: {
         boardid,
@@ -196,6 +195,22 @@ app.get("/issue/:boardid/:id", (req, res) => {
     .catch((e) => {
       res.send(e);
     });
+});
+
+app.put("/issue/:id", (req, res) => {
+  const params = req.params;
+  const { id } = params;
+  const body = req.body;
+  const { title, content } = body;
+
+  models.issue
+    .update({ title, content }, { where: { id } })
+    .then((result) => {
+      res.send({
+        result,
+      });
+    })
+    .catch((error) => {});
 });
 
 app.post("/issue", (req, res) => {
