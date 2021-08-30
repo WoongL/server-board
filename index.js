@@ -160,9 +160,16 @@ app.get("/board", (req, res) => {
 app.get("/issue/:boardid", (req, res) => {
   const params = req.params;
   const { boardid } = params;
+  const pagescale = req.query.pagescale != null ? req.query.pagescale : 18;
+  const page = req.query.page != null ? req.query.page : 1;
+  const offset = (page - 1) * pagescale;
+
+  console.log(page);
 
   models.issue
     .findAll({
+      limit: pagescale,
+      offset,
       order: [["id", "ASC"]],
       attributes: ["id", "title", "content", "writer", "createdAt"],
       where: {
@@ -170,7 +177,20 @@ app.get("/issue/:boardid", (req, res) => {
       },
     })
     .then((r) => {
-      res.send(r);
+      models.issue
+        .findAll({
+          attributes: [[models.sequelize.fn("count", "*"), "count"]],
+          where: {
+            boardid,
+          },
+        })
+        .then((r2) => {
+          const count = r2[0];
+          res.send({ issue: r, count });
+        })
+        .catch((error) => {
+          res.send(error);
+        });
     })
     .catch((e) => {
       res.send(e);
